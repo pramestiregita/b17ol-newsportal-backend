@@ -48,5 +48,23 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  updateRole: async (req, res) => {
+    try {
+      const { id } = req.params
+      const { roleName } = req.body
+      if (roleName) {
+        const results = await Roles.update({ roleName }, { where: { id } })
+        if (results) {
+          return response(res, 'Update successfully', { data: { roleName } })
+        } else {
+          return response(res, 'Failed to update', {}, 400, false)
+        }
+      } else {
+        return response(res, 'Failed to update', {}, 400, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
