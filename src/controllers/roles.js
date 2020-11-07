@@ -1,6 +1,7 @@
 const { Roles } = require('../models')
 const response = require('../helpers/response')
 const pagination = require('../helpers/pagination')
+const sort = require('../helpers/sorting')
 const { Op } = require('sequelize')
 
 module.exports = {
@@ -16,7 +17,15 @@ module.exports = {
   getRoles: async (req, res) => {
     try {
       const { search = '' } = req.query
-      const count = await Roles.count()
+      const { sortKey, sortBy } = sort.roles(req.query.sort)
+      console.log(sortKey, sortBy)
+      const count = await Roles.count({
+        where: {
+          roleName: {
+            [Op.like]: `%${search}%`
+          }
+        }
+      })
       const { pageInfo, offset } = pagination(req, count)
       const results = await Roles.findAll({
         where: {
@@ -24,6 +33,7 @@ module.exports = {
             [Op.like]: `%${search}%`
           }
         },
+        order: [[sortKey, sortBy]],
         limit: pageInfo.limit,
         offset
       })
