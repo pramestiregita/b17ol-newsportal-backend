@@ -66,5 +66,23 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  deleteRole: async (req, res) => {
+    try {
+      const { id } = req.params
+      const find = await Roles.findByPk(id)
+      if (find) {
+        const results = await Roles.destroy({ where: { id } })
+        if (results) {
+          return response(res, 'Delete role successfully')
+        } else {
+          return response(res, 'Failed to delete', {}, 400, false)
+        }
+      } else {
+        return response(res, 'Role not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
