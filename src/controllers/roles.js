@@ -35,5 +35,18 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  getRole: async (req, res) => {
+    try {
+      const { id } = req.params
+      const results = await Roles.findByPk(id)
+      if (results) {
+        return response(res, `Data of role id ${id}`, { data: results })
+      } else {
+        return response(res, 'Data not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
