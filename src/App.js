@@ -11,8 +11,10 @@ app.use(morgan('dev'))
 app.use(cors())
 
 const usersRoute = require('../src/routes/users')
+const rolesRoute = require('../src/routes/roles')
 
 app.use('/user', usersRoute)
+app.use('/role', rolesRoute)
 
 const response = require('../src/helpers/response')
 
