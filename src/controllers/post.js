@@ -184,5 +184,43 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  updateOwnAll: async (req, res) => {
+    try {
+      const { id: userId } = req.user
+      const { id } = req.params
+      const schema = Joi.object({
+        title: Joi.string().required().messages({
+          'string.empty': 'Title can\'t be empty',
+          'any.required': 'Title must be filled'
+        }),
+        news: Joi.string().required().messages({
+          'string.empty': 'Post can\'t be empty',
+          'any.required': 'Post must be filled'
+        })
+      })
+      const user = await Users.findByPk(userId)
+      if (user) {
+        const find = await Post.findByPk(id)
+        if (find) {
+          const { value, error } = schema.validate(req.body)
+          if (error) {
+            return response(res, error.message, {}, 400, false)
+          }
+          const results = await Post.update(value, { where: { id } })
+          if (results) {
+            return response(res, 'Update successfully', { data: value })
+          } else {
+            return response(res, 'Failed to update', {}, 400, false)
+          }
+        } else {
+          return response(res, 'News not found', {}, 404, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
