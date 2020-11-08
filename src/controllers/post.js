@@ -274,5 +274,77 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  updateAll: async (req, res) => {
+    try {
+      const { id } = req.params
+      const schema = Joi.object({
+        title: Joi.string().required().messages({
+          'string.empty': 'Title can\'t be empty',
+          'any.required': 'Title must be filled'
+        }),
+        news: Joi.string().required().messages({
+          'string.empty': 'Post can\'t be empty',
+          'any.required': 'Post must be filled'
+        })
+      })
+      const find = await Post.findByPk(id)
+      if (find) {
+        const { value, error } = schema.validate(req.body)
+        if (error) {
+          return response(res, error.message, {}, 400, false)
+        }
+        const results = await Post.update(value, { where: { id } })
+        if (results) {
+          return response(res, 'Update successfully', { data: value })
+        } else {
+          return response(res, 'Failed to update', {}, 400, false)
+        }
+      } else {
+        return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  updatePartial: async (req, res) => {
+    try {
+      const { id } = req.params
+      const find = await Post.findByPk(id)
+      if (find.length) {
+        let value = Object.entries(req.body).map(i => {
+          return { [i[0]]: `${i[1]}` }
+        })
+        value = Object.assign(...value, {})
+        const results = await Post.update(value, { where: { id } })
+        if (results) {
+          return response(res, 'Update successfully', { data: value })
+        } else {
+          return response(res, 'Failed to update', {}, 400, false)
+        }
+      } else {
+        return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  deletePost: async (req, res) => {
+    try {
+      const { id } = req.params
+      const find = await Post.findByPk(id)
+      if (find.length) {
+        const results = await Post.destroy({ where: { id } })
+        if (results) {
+          return response(res, 'Delete successfully')
+        } else {
+          return response(res, 'Failed to delete', {}, 400, false)
+        }
+      } else {
+        return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
