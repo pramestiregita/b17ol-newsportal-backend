@@ -61,12 +61,25 @@ module.exports = {
         // ]
         order: [[sortKey, sortBy]],
         limit: pageInfo.limit,
-        offset
+        offset,
+        attributes: { exclude: ['password'] }
       })
-      return response(res, 'Data of Users', { data: results, pageInfo })
+      if (results) {
+        return response(res, 'Data of Users', { data: results, pageInfo })
+      } else {
+        return response(res, 'Data not found', {}, 404, false)
+      }
     } catch (err) {
-      console.log(err)
       return response(res, err.message, {}, 400, false)
+    }
+  },
+  getUser: async (req, res) => {
+    const { id } = req.params
+    const results = await Users.findByPk(id, { attributes: { exclude: ['password'] } })
+    if (results) {
+      return response(res, 'Detail of user', { data: results })
+    } else {
+      return response(res, 'User not found', {}, 400, false)
     }
   }
 }
