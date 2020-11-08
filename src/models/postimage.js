@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   PostImage.init({
     postId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       validate: {
         notNull: {
           msg: 'Post id must be filled'
@@ -24,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     image: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         notNull: {
           msg: 'Please choose an image'
