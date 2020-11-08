@@ -11,9 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
+      // Users.associate = Users.belongsTo(models.Roles, { foreignKey: 'roleId' })
     }
   };
   Users.init({
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     fullName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -50,5 +55,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Users'
   })
+  // Users.hasOne(Roles, { foreignKey: 'roleId' })
   return Users
 }
