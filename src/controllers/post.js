@@ -149,5 +149,40 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  getOwnPosts: async (req, res) => {
+    try {
+      const { id: userId } = req.user
+      console.log(userId)
+      const { searchKey, searchValue } = search.post(req.query.search)
+      const { sortKey, sortBy } = sort.post(req.query.sort)
+      const count = await Post.count({
+        where: {
+          userId,
+          [searchKey]: {
+            [Op.like]: `%${searchValue}%`
+          }
+        }
+      })
+      const { pageInfo, offset } = paging(req, count)
+      const results = await Post.findAll({
+        where: {
+          userId,
+          [searchKey]: {
+            [Op.like]: `%${searchValue}%`
+          }
+        },
+        order: [[sortKey, sortBy]],
+        limit: pageInfo.limit,
+        offset
+      })
+      if (results) {
+        return response(res, 'List of News', { data: results, pageInfo })
+      } else {
+        return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
