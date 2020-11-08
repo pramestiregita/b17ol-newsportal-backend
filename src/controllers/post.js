@@ -222,5 +222,33 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  updateOwnPartial: async (req, res) => {
+    try {
+      const { id: userId } = req.user
+      const { id } = req.params
+      const user = await Users.findByPk(userId)
+      if (user) {
+        const find = await Post.findByPk(id)
+        if (find) {
+          let value = Object.entries(req.body).map(i => {
+            return { [i[0]]: `${i[1]}` }
+          })
+          value = Object.assign(...value, {})
+          const results = await Post.update(value, { where: { id } })
+          if (results) {
+            return response(res, 'Update successfully', { data: value })
+          } else {
+            return response(res, 'Failed to update', {}, 400, false)
+          }
+        } else {
+          return response(res, 'News not found', {}, 404, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
