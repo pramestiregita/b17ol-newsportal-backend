@@ -11,11 +11,11 @@ app.use(morgan('dev'))
 app.use(cors())
 
 const usersRoute = require('../src/routes/users')
-const rolesRoute = require('../src/routes/roles')
+const adminRoute = require('../src/routes/admin')
 const authRoute = require('../src/routes/auth')
 
 app.use('/user', usersRoute)
-app.use('/role', rolesRoute)
+app.use('/admin', adminRoute)
 app.use('/auth', authRoute)
 
 app.listen(APP_PORT, () => {

@@ -57,6 +57,10 @@ module.exports = async (req, res) => {
               } else {
                 return response(res, 'Wrong email or password', {}, 400, false)
               }
+              break
+            }
+            default: {
+              return response(res, 'Wrong path', {}, 400, false)
             }
           }
         } else {
