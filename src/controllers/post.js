@@ -1,6 +1,10 @@
 const { Post, Users } = require('../models')
 const response = require('../helpers/response')
 const Joi = require('joi')
+const search = require('../helpers/searching')
+const sort = require('../helpers/sorting')
+const paging = require('../helpers/pagination')
+const { Op } = require('sequelize')
 
 module.exports = {
   createPost: async (req, res) => {
@@ -15,7 +19,6 @@ module.exports = {
         })
       })
       const find = await Users.findByPk(userId)
-      // console.log(find)
       if (find) {
         const { value, error } = schema.validate(req.body)
         if (error) {
@@ -44,6 +47,38 @@ module.exports = {
       } else {
         return response(res, err.message, {}, 400, false)
       }
+    }
+  },
+  getPosts: async (req, res) => {
+    try {
+      const { searchKey, searchValue } = search.post(req.query.search)
+      const { sortKey, sortBy } = sort.post(req.query.sort)
+      const count = await Post.count({
+        where: {
+          [searchKey]: {
+            [Op.like]: `%${searchValue}%`
+          }
+        },
+        order: [[sortKey, sortBy]]
+      })
+      const { pageInfo, offset } = paging(req, count)
+      const results = await Post.findAll({
+        where: {
+          [searchKey]: {
+            [Op.like]: `%${searchValue}%`
+          }
+        },
+        order: [[sortKey, sortBy]],
+        limit: pageInfo.limit,
+        offset
+      })
+      if (results) {
+        return response(res, 'List of News', { data: results, pageInfo })
+      } else {
+        return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
     }
   }
 }

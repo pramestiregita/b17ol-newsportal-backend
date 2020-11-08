@@ -13,5 +13,6 @@ route.delete('profile/', userController.deleteMyAccount)
 
 // post
 route.post('/post', postController.createPost)
+route.get('/post', postController.getPosts)
 
 module.exports = route
