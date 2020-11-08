@@ -1,13 +1,17 @@
 const route = require('express').Router()
 const userController = require('../controllers/users')
+const postController = require('../controllers/post')
 
-route.post('/:role', userController.createUser)
-route.get('/profile/', userController.getOwnUser)
-route.get('/', userController.getUsers)
-route.get('/:id', userController.getUser)
-route.put('/', userController.updateAllUser)
-route.patch('/', userController.updatePartialUser)
-route.patch('/password/', userController.updatePasswordUser)
-route.delete('/', userController.deleteMyAccount)
+// users
+route.get('/profile', userController.getOwnUser)
+route.get('/user', userController.getUsers)
+route.get('/user/:id', userController.getUser)
+route.put('/profile', userController.updateAllUser)
+route.patch('/profile', userController.updatePartialUser)
+route.patch('/profile/password/', userController.updatePasswordUser)
+route.delete('profile/', userController.deleteMyAccount)
+
+// post
+route.post('/post', postController.createPost)
 
 module.exports = route
