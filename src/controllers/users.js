@@ -234,5 +234,158 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  getOwnUser: async (req, res) => {
+    try {
+      const { id } = req.user
+      const results = await Users.findByPk(id, { attributes: { exclude: ['password'] } })
+      if (results) {
+        return response(res, 'Detail of user', { data: results })
+      } else {
+        return response(res, 'User not found', {}, 400, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  updateAllUser: async (req, res) => {
+    try {
+      const { id } = req.user
+      const find = await Users.findByPk(id)
+      if (find) {
+        const { fullName, email, oldPassword, newPassword, confirmPassword } = req.body
+        if (fullName && email && oldPassword && newPassword && confirmPassword) {
+          const old = find.dataValues.password
+          const oldPass = await bcrypt.compare(oldPassword, old)
+          if (oldPass) {
+            const change = oldPassword !== newPassword
+            if (change) {
+              const newPass = newPassword === confirmPassword
+              if (newPass) {
+                const password = await bcrypt.hash(newPassword, await bcrypt.genSalt())
+                let data = { fullName, email, password }
+                const results = await Users.update(data, { where: { id } })
+                if (results) {
+                  data = {
+                    ...data,
+                    password: undefined
+                  }
+                  return response(res, 'Update user successfully', { data })
+                } else {
+                  return response(res, 'Failed to update', {}, 400, false)
+                }
+              } else {
+                return response(res, 'New password doesn\'t match', {}, 400, false)
+              }
+            } else {
+              return response(res, 'Password doesn\'t change', {}, 400, false)
+            }
+          } else {
+            return response(res, 'Your old password is wrong', {}, 400, false)
+          }
+        } else {
+          return response(res, 'All fields must be filled', {}, 400, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      if (err.errors) {
+        const msg = err.errors[0].message
+        return response(res, msg, {}, 400, false)
+      }
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  updatePartialUser: async (req, res) => {
+    try {
+      const { id } = req.user
+      const find = await Users.findByPk(id)
+      if (find) {
+        let body = Object.entries(req.body).map(i => {
+          return { [i[0]]: i[1] }
+        })
+        body = Object.assign(...body, {})
+        const results = await Users.update(body, { where: { id } })
+        if (results) {
+          return response(res, 'Update successfully', { data: body })
+        } else {
+          return response(res, 'Failed to update', {}, 400, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      if (err.errors) {
+        const msg = err.errors[0].message
+        return response(res, msg, {}, 400, false)
+      }
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  updatePasswordUser: async (req, res) => {
+    try {
+      const { id } = req.user
+      const find = await Users.findByPk(id)
+      if (find) {
+        const schema = Joi.object({
+          oldPassword: Joi.string().required().messages({ 'any.required': 'Old password must be filled' }),
+          newPassword: Joi.string().required().messages({ 'any.required': 'New password must be filled' }),
+          confirmPassword: Joi.string().required().messages({ 'any.required': 'Please confirm your new password' })
+        })
+        const { value, error } = schema.validate(req.body)
+        if (error) {
+          return response(res, error.message, {}, 400, false)
+        } else {
+          const { oldPassword, newPassword, confirmPassword } = value
+          const old = find.dataValues.password
+          const oldPass = await bcrypt.compare(oldPassword, old)
+          if (oldPass) {
+            const change = oldPassword !== newPassword
+            if (change) {
+              const newPass = newPassword === confirmPassword
+              if (newPass) {
+                const password = await bcrypt.hash(newPassword, await bcrypt.genSalt())
+                const data = { password }
+                const results = await Users.update(data, { where: { id } })
+                if (results) {
+                  return response(res, 'Update password successfully')
+                } else {
+                  return response(res, 'Failed to update', {}, 400, false)
+                }
+              } else {
+                return response(res, 'New password doesn\'t match', {}, 400, false)
+              }
+            } else {
+              return response(res, 'Password doesn\'t change', {}, 400, false)
+            }
+          } else {
+            return response(res, 'Your old password is wrong', {}, 400, false)
+          }
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  deleteMyAccount: async (req, res) => {
+    try {
+      const { id } = req.user
+      const find = await Users.findByPk(id)
+      if (find) {
+        const results = await Users.destroy({ where: { id } })
+        if (results) {
+          return response(res, 'Delete user successfully')
+        } else {
+          return response(res, 'Failed to delete', {}, 400, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
