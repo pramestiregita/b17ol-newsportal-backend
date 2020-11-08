@@ -14,5 +14,8 @@ route.delete('profile/', userController.deleteMyAccount)
 // post
 route.post('/post', postController.createPost)
 route.get('/post', postController.getPosts)
+route.get('/post/:id', postController.getPost)
+route.get('/post/author/:id', postController.getAuthorPosts)
+route.get('/post/author/:userId/:id', postController.getAuthorPost)
 
 module.exports = route

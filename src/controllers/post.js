@@ -58,8 +58,7 @@ module.exports = {
           [searchKey]: {
             [Op.like]: `%${searchValue}%`
           }
-        },
-        order: [[sortKey, sortBy]]
+        }
       })
       const { pageInfo, offset } = paging(req, count)
       const results = await Post.findAll({
@@ -76,6 +75,76 @@ module.exports = {
         return response(res, 'List of News', { data: results, pageInfo })
       } else {
         return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  getPost: async (req, res) => {
+    try {
+      const { id } = req.params
+      const results = await Post.findByPk(id)
+      if (results) {
+        return response(res, 'Detail News', { data: results })
+      } else {
+        return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  getAuthorPosts: async (req, res) => {
+    try {
+      const { id: userId } = req.params
+      const { searchKey, searchValue } = search.post(req.query.search)
+      const { sortKey, sortBy } = sort.post(req.query.sort)
+      const user = await Users.findByPk(userId)
+      if (user) {
+        const count = await Post.count({
+          where: {
+            userId,
+            [searchKey]: {
+              [Op.like]: `%${searchValue}%`
+            }
+          }
+        })
+        const { pageInfo, offset } = paging(req, count)
+        const results = await Post.findAll({
+          where: {
+            userId,
+            [searchKey]: {
+              [Op.like]: `%${searchValue}%`
+            }
+          },
+          order: [[sortKey, sortBy]],
+          limit: pageInfo.limit,
+          offset
+        })
+        if (results.length) {
+          return response(res, 'List of News', { user, data: results, pageInfo })
+        } else {
+          return response(res, 'User does\'t have post', {}, 404, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  getAuthorPost: async (req, res) => {
+    try {
+      const { userId, id } = req.params
+      const user = await Users.findByPk(userId)
+      if (user) {
+        const results = await Post.findAll({ where: { userId, id } })
+        if (results.length) {
+          return response(res, 'Detail News', { data: results })
+        } else {
+          return response(res, 'News not found', {}, 404, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
       }
     } catch (err) {
       return response(res, err.message, {}, 400, false)
