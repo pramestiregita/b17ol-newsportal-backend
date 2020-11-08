@@ -3,9 +3,9 @@ const authController = require('../controllers/auth')
 const userController = require('../controllers/users')
 
 // login
-route.post('/:role', authController)
+route.post('/login/:role', authController)
 
 // register user
-route.post('/user', userController.createUser)
+route.post('/signup/user', userController.createUser)
 
 module.exports = route

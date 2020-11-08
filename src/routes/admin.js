@@ -3,19 +3,19 @@ const rolesController = require('../controllers/roles')
 const userController = require('../controllers/users')
 
 // Roles
-route.post('/', rolesController.createRole)
-route.get('/', rolesController.getRoles)
-route.get('/:id', rolesController.getRole)
-route.patch('/:id', rolesController.updateRole)
-route.delete('/:id', rolesController.deleteRole)
+route.post('/role', rolesController.createRole)
+route.get('/role', rolesController.getRoles)
+route.get('/role/:id', rolesController.getRole)
+route.patch('/role/:id', rolesController.updateRole)
+route.delete('/role/:id', rolesController.deleteRole)
 
 // Users
-route.post('/:role', userController.createUser)
-route.get('/', userController.getUsers)
-route.get('/:id', userController.getUser)
-route.put('/:id', userController.updateAll)
-route.patch('/:id', userController.updatePartial)
-route.patch('/password/:id', userController.updatePassword)
-route.delete('/:id', userController.deleteUser)
+route.post('/user/:role', userController.createUser)
+route.get('/user', userController.getUsers)
+route.get('/user/:id', userController.getUser)
+route.put('/user/:id', userController.updateAll)
+route.patch('/user/:id', userController.updatePartial)
+route.patch('/user/password/:id', userController.updatePassword)
+route.delete('/user/:id', userController.deleteUser)
 
 module.exports = route

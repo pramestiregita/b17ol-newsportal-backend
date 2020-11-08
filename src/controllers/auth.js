@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
           switch (req.params.role) {
             case 'admin': {
               if (roleId === 1) {
-                jwt.sign({ id }, ADMIN_KEY, (err, token) => {
+                jwt.sign({ id }, ADMIN_KEY, { expiresIn: '30 days' }, (err, token) => {
                   if (err) {
                     return response(res, err.message, 500, false)
                   } else {
@@ -47,7 +47,7 @@ module.exports = async (req, res) => {
             }
             case 'user': {
               if (roleId === 2) {
-                jwt.sign({ id }, USER_KEY, (err, token) => {
+                jwt.sign({ id }, USER_KEY, { expiresIn: '30 days' }, (err, token) => {
                   if (err) {
                     return response(res, err.message, 500, false)
                   } else {

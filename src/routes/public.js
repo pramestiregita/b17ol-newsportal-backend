@@ -1,8 +1,8 @@
 const route = require('express').Router()
-const userController = require('../controllers/users')
+const publicController = require('../controllers/public')
 
 // Users
-route.get('/', userController.getUsers)
-route.get('/:id', userController.getUser)
+route.get('/user', publicController.getUsers)
+route.get('/user/:id', publicController.getUser)
 
 module.exports = route
