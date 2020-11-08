@@ -2,8 +2,6 @@
 const {
   Model
 } = require('sequelize')
-// const { Sequelize } = require('.')
-// const Users = require('./users')
 module.exports = (sequelize, DataTypes) => {
   class Roles extends Model {
     /**
@@ -13,11 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      Roles.associate = Roles.hasMany(models.Users, { foreignKey: 'rolesId' })
+      // Roles.associate = Roles.hasMany(models.Users, { foreignKey: 'rolesId', as: 'roleId' })
     }
   };
   Roles.init({
-    roleName: DataTypes.STRING
+    roleName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'Roles'
