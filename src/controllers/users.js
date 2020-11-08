@@ -89,8 +89,8 @@ module.exports = {
       if (find) {
         const { fullName, email, oldPassword, newPassword, confrimPassword } = req.body
         if (fullName && email && oldPassword && newPassword && confrimPassword) {
-          const password = find.dataValues.password
-          const oldPass = await bcrypt.compare(oldPassword, password)
+          const old = find.dataValues.password
+          const oldPass = await bcrypt.compare(oldPassword, old)
           if (oldPass) {
             const change = oldPassword !== newPassword
             if (change) {
@@ -115,6 +115,32 @@ module.exports = {
           }
         } else {
           return response(res, 'All fields must be filled', {}, 400, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      if (err.errors) {
+        const msg = err.errors[0].message
+        return response(res, msg, {}, 400, false)
+      }
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  updatePartial: async (req, res) => {
+    try {
+      const { id } = req.params
+      const find = await Users.findByPk(id)
+      if (find) {
+        let body = Object.entries(req.body).map(i => {
+          return { [i[0]]: i[1] }
+        })
+        body = Object.assign(...body, {})
+        const results = await Users.update(body, { where: { id } })
+        if (results) {
+          return response(res, 'Update successfully', { data: body })
+        } else {
+          return response(res, 'Failed to update', {}, 400, false)
         }
       } else {
         return response(res, 'User not found', {}, 404, false)
