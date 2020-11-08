@@ -201,8 +201,8 @@ module.exports = {
       })
       const user = await Users.findByPk(userId)
       if (user) {
-        const find = await Post.findByPk(id)
-        if (find) {
+        const find = await Post.findAll({ where: { userId, id } })
+        if (find.length) {
           const { value, error } = schema.validate(req.body)
           if (error) {
             return response(res, error.message, {}, 400, false)
@@ -229,8 +229,8 @@ module.exports = {
       const { id } = req.params
       const user = await Users.findByPk(userId)
       if (user) {
-        const find = await Post.findByPk(id)
-        if (find) {
+        const find = await Post.findAll({ where: { userId, id } })
+        if (find.length) {
           let value = Object.entries(req.body).map(i => {
             return { [i[0]]: `${i[1]}` }
           })
@@ -240,6 +240,30 @@ module.exports = {
             return response(res, 'Update successfully', { data: value })
           } else {
             return response(res, 'Failed to update', {}, 400, false)
+          }
+        } else {
+          return response(res, 'News not found', {}, 404, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  deleteOwnPost: async (req, res) => {
+    try {
+      const { id: userId } = req.user
+      const { id } = req.params
+      const user = await Users.findByPk(userId)
+      if (user) {
+        const find = await Post.findAll({ where: { userId, id } })
+        if (find.length) {
+          const results = await Post.destroy({ where: { id } })
+          if (results) {
+            return response(res, 'Delete successfully')
+          } else {
+            return response(res, 'Failed to delete', {}, 400, false)
           }
         } else {
           return response(res, 'News not found', {}, 404, false)

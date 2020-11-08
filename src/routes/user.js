@@ -19,5 +19,6 @@ route.get('/post/author/:id', postController.getAuthorPosts)
 route.get('/my-post', postController.getOwnPosts)
 route.put('/my-post/:id', postController.updateOwnAll)
 route.patch('/my-post/:id', postController.updateOwnPartial)
+route.delete('/my-post/:id', postController.deleteOwnPost)
 
 module.exports = route
