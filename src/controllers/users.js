@@ -26,10 +26,10 @@ module.exports = {
       let results = await Users.create(data)
       if (results) {
         results = {
-          ...results,
+          ...results.dataValues,
           password: undefined
         }
-        return response(res, 'Create user successfully', { data: results })
+        return response(res, 'Create user successfully', { data: results }, 201)
       } else {
         return response(res, 'Failed to signup', {}, 400, false)
       }
@@ -209,6 +209,24 @@ module.exports = {
           } else {
             return response(res, 'Your old password is wrong', {}, 400, false)
           }
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  deleteUser: async (req, res) => {
+    try {
+      const { id } = req.params
+      const find = await Users.findByPk(id)
+      if (find) {
+        const results = await Users.destroy({ where: { id } })
+        if (results) {
+          return response(res, 'Delete user successfully')
+        } else {
+          return response(res, 'Failed to delete', {}, 400, false)
         }
       } else {
         return response(res, 'User not found', {}, 404, false)
