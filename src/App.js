@@ -12,15 +12,11 @@ app.use(cors())
 
 const usersRoute = require('../src/routes/users')
 const rolesRoute = require('../src/routes/roles')
+const authRoute = require('../src/routes/auth')
 
 app.use('/user', usersRoute)
 app.use('/role', rolesRoute)
-
-const response = require('../src/helpers/response')
-
-app.get('/', (req, res) => {
-  response(res, 'Backend is running')
-})
+app.use('/auth', authRoute)
 
 app.listen(APP_PORT, () => {
   console.log(`App listening to port ${APP_PORT}`)
