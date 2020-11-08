@@ -31,7 +31,7 @@ module.exports = {
         const msg = err.message.slice(19)
         return response(res, msg, {}, 400, false)
       } else if (err.errors) {
-        const msg = err.errors
+        const msg = err.errors[0].message
         return response(res, msg, {}, 400, false)
       } else {
         return response(res, err.message, {}, 400, false)
@@ -80,6 +80,51 @@ module.exports = {
       return response(res, 'Detail of user', { data: results })
     } else {
       return response(res, 'User not found', {}, 400, false)
+    }
+  },
+  updateAll: async (req, res) => {
+    try {
+      const { id } = req.params
+      const find = await Users.findByPk(id)
+      if (find) {
+        const { fullName, email, oldPassword, newPassword, confrimPassword } = req.body
+        if (fullName && email && oldPassword && newPassword && confrimPassword) {
+          const password = find.dataValues.password
+          const oldPass = await bcrypt.compare(oldPassword, password)
+          if (oldPass) {
+            const change = oldPassword !== newPassword
+            if (change) {
+              const newPass = newPassword === confrimPassword
+              if (newPass) {
+                const password = await bcrypt.hash(newPassword, await bcrypt.genSalt())
+                const data = { fullName, email, password }
+                const results = await Users.update(data, { where: { id } })
+                if (results) {
+                  return response(res, 'Update user successfully', { data })
+                } else {
+                  return response(res, 'Failed to update', {}, 400, false)
+                }
+              } else {
+                return response(res, 'New password doesn\'t match', {}, 400, false)
+              }
+            } else {
+              return response(res, 'Password doesn\'t change', {}, 400, false)
+            }
+          } else {
+            return response(res, 'Your old password is wrong', {}, 400, false)
+          }
+        } else {
+          return response(res, 'All fields must be filled', {}, 400, false)
+        }
+      } else {
+        return response(res, 'User not found', {}, 404, false)
+      }
+    } catch (err) {
+      if (err.errors) {
+        const msg = err.errors[0].message
+        return response(res, msg, {}, 400, false)
+      }
+      return response(res, err.message, {}, 400, false)
     }
   }
 }
