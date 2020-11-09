@@ -1,4 +1,4 @@
-const { Users } = require('../models')
+const { Users, Roles } = require('../models')
 const response = require('../helpers/response')
 const paging = require('../helpers/pagination')
 const search = require('../helpers/searching')
@@ -238,7 +238,18 @@ module.exports = {
   getOwnUser: async (req, res) => {
     try {
       const { id } = req.user
-      const results = await Users.findByPk(id, { attributes: { exclude: ['password'] } })
+      const results = await Users.findByPk(id, {
+        attributes: {
+          exclude: ['password']
+        },
+        include: [
+          {
+            model: Roles,
+            as: 'role',
+            attributes: ['roleName']
+          }
+        ]
+      })
       if (results) {
         return response(res, 'Detail of user', { data: results })
       } else {

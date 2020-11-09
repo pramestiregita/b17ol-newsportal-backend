@@ -69,7 +69,14 @@ module.exports = {
         },
         order: [[sortKey, sortBy]],
         limit: pageInfo.limit,
-        offset
+        offset,
+        include: [
+          {
+            model: Users,
+            as: 'author',
+            attributes: ['fullName']
+          }
+        ]
       })
       if (results) {
         return response(res, 'List of News', { data: results, pageInfo })
@@ -83,7 +90,15 @@ module.exports = {
   getPost: async (req, res) => {
     try {
       const { id } = req.params
-      const results = await Post.findByPk(id)
+      const results = await Post.findByPk(id, {
+        include: [
+          {
+            model: Users,
+            as: 'author',
+            attributes: ['fullName']
+          }
+        ]
+      })
       if (results) {
         return response(res, 'Detail News', { data: results })
       } else {
@@ -118,7 +133,14 @@ module.exports = {
           },
           order: [[sortKey, sortBy]],
           limit: pageInfo.limit,
-          offset
+          offset,
+          include: [
+            {
+              model: Users,
+              as: 'author',
+              attributes: ['fullName']
+            }
+          ]
         })
         if (results.length) {
           return response(res, 'List of News', { user, data: results, pageInfo })
@@ -137,7 +159,16 @@ module.exports = {
       const { userId, id } = req.params
       const user = await Users.findByPk(userId)
       if (user) {
-        const results = await Post.findAll({ where: { userId, id } })
+        const results = await Post.findAll({
+          where: { userId, id },
+          include: [
+            {
+              model: Users,
+              as: 'author',
+              attributes: ['fullName']
+            }
+          ]
+        })
         if (results.length) {
           return response(res, 'Detail News', { data: results })
         } else {
@@ -174,10 +205,42 @@ module.exports = {
         },
         order: [[sortKey, sortBy]],
         limit: pageInfo.limit,
-        offset
+        offset,
+        include: [
+          {
+            model: Users,
+            as: 'author',
+            attributes: ['fullName']
+          }
+        ]
       })
       if (results) {
         return response(res, 'List of News', { data: results, pageInfo })
+      } else {
+        return response(res, 'News not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
+  },
+  getOwnPost: async (req, res) => {
+    try {
+      const { id: userId } = req.user
+      const { id } = req.params
+      const results = await Post.findAll({
+        where: {
+          id, userId
+        },
+        include: [
+          {
+            model: Users,
+            as: 'author',
+            attributes: ['fullName']
+          }
+        ]
+      })
+      if (results) {
+        return response(res, 'Detail News', { data: results })
       } else {
         return response(res, 'News not found', {}, 404, false)
       }
