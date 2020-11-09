@@ -52,5 +52,20 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  getOwnImage: async (req, res) => {
+    try {
+      const { id: userId } = req.user
+      const { id: postId } = req.params
+      const results = await PostImage.findAll({ where: { userId, postId }, attributes: ['image'] })
+      if (results) {
+        const data = results.map(i => { return i.dataValues.image })
+        return response(res, 'Data of image', { data })
+      } else {
+        return response(res, 'Not found', {}, 404, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
