@@ -24,7 +24,6 @@ module.exports = {
             image: 'upload/' + i.filename
           }
         })
-        console.log(image)
         const results = await PostImage.bulkCreate(image)
         if (results) {
           return response(res, 'Upload image successfully', { data: results }, 201)
@@ -41,7 +40,17 @@ module.exports = {
       }
     })
   },
-  getImages: async (req, res) => {
-
+  getOwnImages: async (req, res) => {
+    try {
+      const { id: userId } = req.user
+      const results = await PostImage.findAll({ where: { userId }, attributes: ['id', 'image'] })
+      if (results) {
+        return response(res, 'List of images', { data: results })
+      } else {
+        return response(res, 'Data not found', {}, 400, false)
+      }
+    } catch (err) {
+      return response(res, err.message, {}, 400, false)
+    }
   }
 }
