@@ -58,8 +58,8 @@ module.exports = {
       const { id: userId } = req.user
       const { id: postId } = req.params
       const results = await PostImage.findAll({ where: { userId, postId }, attributes: ['image'] })
-      if (results) {
-        const data = results.map(i => { return i.dataValues.image })
+      const data = results.map(i => { return i.dataValues.image })
+      if (data.length) {
         return response(res, 'Data of image', { data })
       } else {
         return response(res, 'Not found', {}, 404, false)
