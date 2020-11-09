@@ -5,7 +5,7 @@ const size = 2000
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = 'assets/uploads'
+    const dir = 'assets/uploads/'
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir)
@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
     cb(null, dir)
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname))
+    cb(null, 'image-' + Date.now() + path.extname(file.originalname))
   }
 })
 

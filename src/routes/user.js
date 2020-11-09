@@ -1,6 +1,7 @@
 const route = require('express').Router()
 const userController = require('../controllers/users')
 const postController = require('../controllers/post')
+const postImageController = require('../controllers/postImage')
 
 // users
 route.get('/profile', userController.getOwnUser)
@@ -21,5 +22,8 @@ route.get('/my-post', postController.getOwnPosts)
 route.put('/my-post/:id', postController.updateOwnAll)
 route.patch('/my-post/:id', postController.updateOwnPartial)
 route.delete('/my-post/:id', postController.deleteOwnPost)
+
+// PostImage
+route.post('/post/picture/:id', postImageController.postImage)
 
 module.exports = route

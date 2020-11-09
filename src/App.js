@@ -21,6 +21,9 @@ app.use('/admin', authAdmin, adminRoute)
 app.use('/auth', authRoute)
 app.use('/public', publicRoute)
 
+// provide static files
+app.use('/upload', express.static('assets/uploads/'))
+
 app.listen(APP_PORT, () => {
   console.log(`App listening to port ${APP_PORT}`)
 })
