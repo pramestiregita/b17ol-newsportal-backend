@@ -9,6 +9,7 @@ module.exports = {
     upload(req, res, async (err) => {
       let picture = []
       try {
+        const { id: userId } = req.user
         const { id } = req.params
         if (err instanceof multer.MulterError) {
           return response(res, err.message, {}, 500, false)
@@ -18,6 +19,7 @@ module.exports = {
         picture = req.files
         const image = picture.map(i => {
           return {
+            userId,
             postId: id,
             image: 'upload/' + i.filename
           }
@@ -38,5 +40,8 @@ module.exports = {
         return response(res, err.message, {}, 400, false)
       }
     })
+  },
+  getImages: async (req, res) => {
+
   }
 }

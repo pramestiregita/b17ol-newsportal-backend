@@ -25,5 +25,7 @@ route.delete('/my-post/:id', postController.deleteOwnPost)
 
 // PostImage
 route.post('/post/picture/:id', postImageController.postImage)
+route.get('/my-post/picture', postImageController.getImages)
+// route.get('/post/picture/:id', postImageController.getImage)
 
 module.exports = route

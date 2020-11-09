@@ -14,6 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   PostImage.init({
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User id must be filled'
+        }
+      }
+    },
     postId: {
       type: DataTypes.INTEGER,
       allowNull: false,
