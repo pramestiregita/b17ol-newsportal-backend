@@ -1,4 +1,4 @@
-const { Users, Roles } = require('../models')
+const { Users, UserImages, Roles } = require('../models')
 const response = require('../helpers/response')
 const paging = require('../helpers/pagination')
 const search = require('../helpers/searching')
@@ -247,6 +247,11 @@ module.exports = {
             model: Roles,
             as: 'role',
             attributes: ['roleName']
+          },
+          {
+            model: UserImages,
+            as: 'avatar',
+            attributes: ['image']
           }
         ]
       })

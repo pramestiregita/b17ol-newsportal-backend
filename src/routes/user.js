@@ -1,5 +1,6 @@
 const route = require('express').Router()
 const userController = require('../controllers/users')
+const userImageController = require('../controllers/userImage')
 const postController = require('../controllers/post')
 const postImageController = require('../controllers/postImage')
 
@@ -10,7 +11,9 @@ route.get('/users/:id', userController.getUser)
 route.put('/profile', userController.updateAllUser)
 route.patch('/profile', userController.updatePartialUser)
 route.patch('/profile/password/', userController.updatePasswordUser)
-route.delete('profile/', userController.deleteMyAccount)
+route.delete('/profile/', userController.deleteMyAccount)
+route.post('/profile/image', userImageController.uploadImage)
+route.patch('/profile/image', userImageController.updateImage)
 
 // post
 route.post('/post', postController.createPost)
