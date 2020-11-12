@@ -1,4 +1,4 @@
-const { Post, Users } = require('../models')
+const { Post, Users, PostImage } = require('../models')
 const response = require('../helpers/response')
 const Joi = require('joi')
 const search = require('../helpers/searching')
@@ -75,6 +75,11 @@ module.exports = {
             model: Users,
             as: 'author',
             attributes: ['fullName']
+          },
+          {
+            model: PostImage,
+            as: 'picture',
+            attributes: ['image']
           }
         ]
       })
@@ -96,6 +101,11 @@ module.exports = {
             model: Users,
             as: 'author',
             attributes: ['fullName']
+          },
+          {
+            model: PostImage,
+            as: 'picture',
+            attributes: ['image']
           }
         ]
       })
@@ -211,6 +221,11 @@ module.exports = {
             model: Users,
             as: 'author',
             attributes: ['fullName']
+          },
+          {
+            model: PostImage,
+            as: 'picture',
+            attributes: ['image']
           }
         ]
       })
