@@ -6,6 +6,6 @@ const userController = require('../controllers/users')
 route.post('/login/:role', authController)
 
 // register user
-route.post('/signup/user', userController.createUser)
+route.post('/signup/:role', userController.registerUser)
 
 module.exports = route

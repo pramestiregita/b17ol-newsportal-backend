@@ -398,5 +398,41 @@ module.exports = {
     } catch (err) {
       return response(res, err.message, {}, 400, false)
     }
+  },
+  registerUser: async (req, res) => {
+    try {
+      let { fullName, email, password } = req.body
+      const { role } = req.params
+      if (role !== 'user') {
+        return response(res, 'Access denied', {}, 402, false)
+      }
+      if (password.length < 8) {
+        return response(res, 'Password is too short (min. 8 character)')
+      }
+      password = await bcrypt.hash(password, await bcrypt.genSalt())
+      const data = { roleId: 2, fullName, email, password }
+      let results = await Users.create(data)
+      if (results) {
+        results = {
+          ...results.dataValues,
+          password: undefined
+        }
+        return response(res, 'Create user successfully', { data: results }, 201)
+      } else {
+        return response(res, 'Failed to signup', {}, 400, false)
+      }
+    } catch (err) {
+      if (err.message.includes('\n')) {
+        return response(res, 'All fields must be filled', {}, 400, false)
+      } else if (err.message.includes('notNull')) {
+        const msg = err.message.slice(19)
+        return response(res, msg, {}, 400, false)
+      } else if (err.errors) {
+        const msg = err.errors[0].message
+        return response(res, msg, {}, 400, false)
+      } else {
+        return response(res, err.message, {}, 400, false)
+      }
+    }
   }
 }
