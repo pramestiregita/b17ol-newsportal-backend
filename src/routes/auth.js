@@ -1,7 +1,6 @@
 const route = require('express').Router()
 const authController = require('../controllers/auth')
 const userController = require('../controllers/users')
-const rolesController = require('../controllers/roles')
 
 // login
 route.post('/login/:role', authController)
