@@ -9,7 +9,4 @@ route.post('/login/:role', authController)
 // register user
 route.post('/signup/:role', userController.registerUser)
 
-route.post('/role', rolesController.createRole)
-route.post('/user/:role', userController.createUser)
-
 module.exports = route
