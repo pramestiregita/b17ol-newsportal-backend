@@ -19,8 +19,7 @@ module.exports = {
       },
       news: {
         allowNull: false,
-        type: Sequelize.TEXT,
-        unique: true
+        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,
