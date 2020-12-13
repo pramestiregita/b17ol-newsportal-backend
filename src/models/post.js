@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     news: {
-      type: DataTypes.TEXT('long'),
+      type: DataTypes.TEXT,
       allowNull: false,
       unique: {
         msg: 'You\'re copied this news!'
