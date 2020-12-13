@@ -111,7 +111,7 @@ module.exports = {
           {
             model: Users,
             as: 'author',
-            attributes: ['fullName']
+            attributes: ['fullName', 'avatar']
           },
           {
             model: PostImage,
