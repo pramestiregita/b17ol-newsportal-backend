@@ -1,4 +1,4 @@
-const { Post, Users, PostImage } = require('../models')
+const { Post, Users, PostImage, UserImages } = require('../models')
 const response = require('../helpers/response')
 const Joi = require('joi')
 const search = require('../helpers/searching')
@@ -111,7 +111,14 @@ module.exports = {
           {
             model: Users,
             as: 'author',
-            attributes: ['fullName', 'avatar']
+            attributes: ['fullName'],
+            include: [
+              {
+                model: UserImages,
+                as: 'avatar',
+                attributes: ['image']
+              }
+            ]
           },
           {
             model: PostImage,
