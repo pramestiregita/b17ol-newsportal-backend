@@ -304,6 +304,11 @@ module.exports = {
             model: Users,
             as: 'author',
             attributes: ['fullName']
+          },
+          {
+            model: PostImage,
+            as: 'picture',
+            attributes: ['image']
           }
         ]
       })
