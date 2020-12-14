@@ -1,6 +1,6 @@
 const { PostImage } = require('../models')
 const response = require('../helpers/response')
-const upload = require('../helpers/upload').array('picture')
+const upload = require('../helpers/upload').single('picture')
 const multer = require('multer')
 const fs = require('fs')
 
@@ -36,6 +36,36 @@ module.exports = {
             return response(res, err.message, {}, 400, false)
           }
         }))
+        return response(res, err.message, {}, 400, false)
+      }
+    })
+  },
+  editImage: async (req, res) => {
+    upload(req, res, async (err) => {
+      let picture = []
+      try {
+        const { id: userId } = req.user
+        const { id } = req.params
+        if (err instanceof multer.MulterError) {
+          return response(res, err.message, {}, 500, false)
+        } else if (err) {
+          return response(res, err.message, {}, 500, false)
+        }
+        picture = req.file
+        const image = 'upload/' + picture.filename
+
+        const results = await PostImage.update({ image }, { where: { postId: id, userId } })
+        if (results) {
+          return response(res, 'Update image successfully', { data: results })
+        } else {
+          return response(res, 'Failed to upload image', {}, 400, false)
+        }
+      } catch (err) {
+        picture && fs.unlink(picture.path, (err) => {
+          if (err) {
+            return response(res, err.message, {}, 400, false)
+          }
+        })
         return response(res, err.message, {}, 400, false)
       }
     })

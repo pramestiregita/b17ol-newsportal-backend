@@ -29,6 +29,7 @@ route.delete('/my-post/:id', postController.deleteOwnPost)
 
 // PostImage
 route.post('/post/picture/:id', postImageController.postImage)
+route.patch('/post/picture/:id', postImageController.editImage)
 route.get('/my-post/picture', postImageController.getOwnImages)
 route.get('/my-post/picture/:id', postImageController.getOwnImage)
 
